@@ -37,6 +37,7 @@ from .gfe import GFEParams, pmap_to_gfe
 from .grid import Grid, GridSpec, read_dx, write_dx
 from .maps import RunMaps, combine_runs, run_maps, write_maps
 from .patches import Patch, PatchSet, find_patches
+from .provenance import stamp
 from .runstate import RunStatus, run_status
 from .seeds import (
     assert_no_seed_collision,
@@ -87,6 +88,7 @@ __all__ = [
     "run_seed",
     "run_status",
     "seed_for_attempt",
+    "stamp",
     "write_dx",
     "write_maps",
 ]

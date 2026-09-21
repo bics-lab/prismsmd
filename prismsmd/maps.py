@@ -74,7 +74,10 @@ class RunMaps:
 
     def to_dict(self) -> dict:
         """Return the provenance of these maps as a plain dict."""
+        from .provenance import stamp
+
         return {
+            "prismsmd": stamp(),
             "grid": self.spec.to_dict(),
             "excluded_volume": self.excluded_volume,
             "valid_points": int(self.valid_mask.sum()),

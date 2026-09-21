@@ -37,7 +37,7 @@ STATE_NAME = "run_state.json"
 
 #: The fields every event carries. Anything else a caller passes is optional and may be
 #: absent from a given line.
-FIXED_FIELDS = ("timestamp", "status", "host")
+FIXED_FIELDS = ("timestamp", "status", "host", "prismsmd")
 
 #: How many consecutive failures make a run stuck, so that it is skipped instead of
 #: picked up again by the next job. A few attempts ride out a transient failure -- a
@@ -71,10 +71,15 @@ def record_event(workdir: str | Path, *, status: str, **fields) -> dict:
     """
     workdir = Path(workdir)
     workdir.mkdir(parents=True, exist_ok=True)
+    from .provenance import stamp
+
+    # Per line, not once per file: a run can be resumed days later under a different
+    # build, and the log is the only place that difference is visible.
     event = {
         "timestamp": _dt.datetime.now().astimezone().isoformat(timespec="seconds"),
         "status": status,
         "host": platform.node(),
+        "prismsmd": stamp(),
     }
     event.update(fields)
     with (workdir / EVENTS_NAME).open("a") as fh:
