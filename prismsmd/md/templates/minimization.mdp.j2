@@ -1,0 +1,22 @@
+; {{ title }}
+define       = {{ define }}
+;
+integrator   = steep
+nsteps       = {{ nsteps }}
+nstlog       = {{ nstlog }}
+;
+nstlist      = 5
+ns_type      = grid
+pbc          = {{ pbc }}
+;
+coulombtype  = PME
+; Cutoffs are stated explicitly rather than left to the GROMACS default of 1.0 nm.
+; Keep them equal to the nonbondedCutoff of createSystem
+; (protocol.nonbonded_cutoff_angstrom). rlist is not written: under the Verlet
+; scheme it follows from verlet-buffer-tolerance.
+rvdw            = 1.0
+rcoulomb        = 1.0
+;
+vdwtype      = cut-off
+;
+constraints  = none

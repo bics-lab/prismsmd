@@ -1,0 +1,54 @@
+; {{ title }}
+define            = {{ define }}
+;
+integrator      = md
+dt              = {{ dt }}
+nsteps          = {{ nsteps }}
+
+; Output control
+nstxtcout       = {{ nstxtcout }}
+xtc-precision   = 10000
+;
+; Atom group written to the xtc. Unset (the default) means all atoms.
+;   Non-Water cuts the trajectory size by about 86%, at the cost of making any
+;   later water analysis impossible. The old GROMACS name is xtc-grps, and the
+;   group must exist in the index.ndx given to grompp.
+{% if compressed_x_grps %}compressed-x-grps = {{ compressed_x_grps }}
+{% endif %}nstenergy       = {{ nstenergy }}
+nstlog          = {{ nstlog }}
+
+; Bond parameters
+continuation    = yes
+constraint_algorithm = LINCS
+constraints          = hbonds
+; Langevin Dynamics
+bd_fric = 2.0
+ld_seed = {{ seed }}
+;
+ns_type         = grid
+nstlist         = 5
+;
+coulombtype     = PME
+; Cutoffs are stated explicitly rather than left to the GROMACS default of 1.0 nm.
+; Keep them equal to the nonbondedCutoff of createSystem
+; (protocol.nonbonded_cutoff_angstrom). rlist is not written: under the Verlet
+; scheme it follows from verlet-buffer-tolerance.
+rvdw            = 1.0
+rcoulomb        = 1.0
+;
+tcoupl    = V-rescale
+tc-grps   = Non-Water Water
+tau_t     = 0.1  0.1
+ref_t     = {{ temperature }} {{ temperature }}
+; Pressure coupling
+pcoupl         = {{ pcoupl }}
+pcoupltype     = isotropic
+ref_p          = {{ pressure }}
+compressibility = 4.5e-5
+refcoord_scaling = com
+; Periodic boundary conditions
+pbc                 = {{ pbc }}
+; Dispersion correction
+DispCorr     = EnerPres
+; Velocity generation
+gen_vel         = no

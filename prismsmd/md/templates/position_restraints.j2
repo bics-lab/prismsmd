@@ -1,0 +1,6 @@
+; Position restraints
+#ifdef {{ define_name }}
+[ position_restraints ]
+; atom  type      fx      fy      fz
+{% for atom_id in atom_id_list %}{{ '%6d' % atom_id }}     1{{ '%9.2f' % force_constant }}{{ '%9.2f' % force_constant }}{{ '%9.2f' % force_constant }}
+{% endfor %}#endif

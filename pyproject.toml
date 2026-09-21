@@ -1,0 +1,81 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prismsmd"
+version = "0.1.0"
+description = "Mixed-solvent MD: cosolvent system building, GROMACS inputs and probe density maps"
+requires-python = ">=3.10"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [{name = "Yanagisawa Laboratory"}]
+dependencies = [
+    "numpy",
+    "scipy",
+    "PyYAML",
+    "jinja2",
+]
+
+[project.optional-dependencies]
+# System building and map generation. MD itself runs in GROMACS; OpenMM is used only
+# to assemble and check the system.
+system = [
+    "cosolvkit",
+    "MDAnalysis",      # reads the trajectory
+    "gridData",        # OpenDX I/O
+    "openmm",
+    "openmmforcefields",
+    "openff-toolkit",
+    "pdbfixer",
+    "parmed",
+    "rdkit",
+]
+test = ["pytest"]
+lint = ["ruff>=0.16"]
+
+[tool.setuptools.packages.find]
+include = ["prismsmd*"]
+
+[tool.setuptools.package-data]
+prismsmd = ["md/templates/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+# ruff: the configuration is pinned here so `python -m ruff check prismsmd` reproduces.
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "F",      # pyflakes
+    "E", "W", # pycodestyle
+    "I",      # import order
+    "N",      # naming
+    "UP",     # modernisation
+    "B",      # bugbear
+    "C4",     # comprehensions
+    "SIM",    # simplifiable branches
+    "RUF",
+    "PIE", "FURB", "TRY", "BLE", "DTZ", "PLW", "PLR0402", "C90",
+]
+ignore = [
+    # Long explanatory comments make line length a poor readability signal here.
+    "E501",
+    # Exception messages state what happened and what to fix, which takes room.
+    "TRY003",
+    # `import constants as C` and similar abbreviations are deliberate.
+    "N812", "N813", "N814",
+    # Normalising a loop variable and reassigning it is a deliberate pattern.
+    "PLW2901",
+    # int(round(x)) states "this is an integer"; numpy values pass through it too.
+    "RUF046",
+    # Function complexity is not used as a metric; splitting is a human decision.
+    "C901",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# `Chem = _require_rdkit()` is a lazily imported module, so the capital is correct.
+"prismsmd/probeprep.py" = ["N806"]
